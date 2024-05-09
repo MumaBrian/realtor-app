@@ -20,6 +20,7 @@ import {
 	UpdateHomeDto,
 } from './dto/home.dto';
 import { HomeService } from './home.service';
+import { User, UserInfo } from 'src/user/decorators/user.decorator';
 // import { AuthGuard } from 'src/guards/auth.guard';
 // import { Roles } from 'src/decorators/roles.decorator';
 
@@ -58,8 +59,8 @@ export class HomeController {
 
 	// @Roles(UserType.REALTOR)
 	@Post()
-	createHome(@Body() body: CreateHomeDto) {
-		return this.homeService.createHome(body);
+	createHome(@Body() body: CreateHomeDto, @User() user: UserInfo) {
+		return this.homeService.createHome(body, user.id);
 	}
 
 	// @Roles(UserType.REALTOR)

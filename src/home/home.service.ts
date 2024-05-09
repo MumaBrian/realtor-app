@@ -113,7 +113,7 @@ export class HomeService {
 			propertyType,
 			images,
 		}: CreateHomeParams,
-		// userId: number,
+		userId: number,
 	) {
 		const home = await this.prismaService.home.create({
 			data: {
@@ -124,7 +124,7 @@ export class HomeService {
 				land_size: landSize,
 				propertyType,
 				price,
-				realtor_id: 5,
+				realtor_id: userId,
 			},
 		});
 

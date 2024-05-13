@@ -12,7 +12,6 @@ import {
 	UnauthorizedException,
 	UseGuards,
 } from '@nestjs/common';
-// import { User, UserInfo } from 'src/user/decorators/user.decorator';
 import {
 	CreateHomeDto,
 	HomeResponseDto,
@@ -21,7 +20,7 @@ import {
 } from './dto/home.dto';
 import { HomeService } from './home.service';
 import { User, UserInfo } from 'src/user/decorators/user.decorator';
-// import { AuthGuard } from 'src/guards/auth.guard';
+import { AuthGuard } from 'src/guards/auth.guard';
 // import { Roles } from 'src/decorators/roles.decorator';
 
 @Controller('home')
@@ -57,10 +56,11 @@ export class HomeController {
 		return this.homeService.getHomeById(id);
 	}
 
-	// @Roles(UserType.REALTOR)
+	@UseGuards(AuthGuard)
 	@Post()
 	createHome(@Body() body: CreateHomeDto, @User() user: UserInfo) {
-		return this.homeService.createHome(body, user.id);
+		// return this.homeService.createHome(body, user.id);
+		return "created home"
 	}
 
 	// @Roles(UserType.REALTOR)

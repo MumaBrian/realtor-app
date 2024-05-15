@@ -20,7 +20,8 @@ import {
 } from './dto/home.dto';
 import { HomeService } from './home.service';
 import { User, UserInfo } from 'src/user/decorators/user.decorator';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { AuthGuard } from 'src/guards/guard';
+import { Roles } from 'src/decorators/roles.decorator';
 // import { Roles } from 'src/decorators/roles.decorator';
 
 @Controller('home')
@@ -55,43 +56,42 @@ export class HomeController {
 	getHome(@Param('id', ParseIntPipe) id: number) {
 		return this.homeService.getHomeById(id);
 	}
-
+	@Roles(UserType.REALTOR  )
 	@UseGuards(AuthGuard)
 	@Post()
 	createHome(@Body() body: CreateHomeDto, @User() user: UserInfo) {
-		// return this.homeService.createHome(body, user.id);
-		return "created home"
+		return this.homeService.createHome(body, user.id);
 	}
 
-	// @Roles(UserType.REALTOR)
-	// @Put(':id')
-	// async updateHome(
-	// 	@Param('id', ParseIntPipe) id: number,
-	// 	@Body() body: UpdateHomeDto,
-	// 	@User() user: UserInfo,
-	// ) {
-	// 	const realtor = await this.homeService.getRealtorByHomeId(id);
+	@Roles(UserType.REALTOR)
+	@Put(':id')
+	async updateHome(
+		@Param('id', ParseIntPipe) id: number,
+		@Body() body: UpdateHomeDto,
+		@User() user: UserInfo,
+	) {
+		const realtor = await this.homeService.getRealtorByHomeId(id);
 
-	// 	if (realtor.id !== user.id) {
-	// 		throw new UnauthorizedException();
-	// 	}
+		if (realtor.id !== user.id) {
+			throw new UnauthorizedException();
+		}
 
-	// 	return this.homeService.updateHomeById(id, body);
-	// }
+		return this.homeService.updateHomeById(id, body);
+	}
 
-	// @Roles(UserType.REALTOR)
-	// @Delete(':id')
-	// async deleteHome(
-	// 	@Param('id', ParseIntPipe) id: number,
-	// 	@User() user: UserInfo,
-	// ) {
-	// 	const realtor = await this.homeService.getRealtorByHomeId(id);
+	@Roles(UserType.REALTOR)
+	@Delete(':id')
+	async deleteHome(
+		@Param('id', ParseIntPipe) id: number,
+		@User() user: UserInfo,
+	) {
+		const realtor = await this.homeService.getRealtorByHomeId(id);
 
-	// 	if (realtor.id !== user.id) {
-	// 		throw new UnauthorizedException();
-	// 	}
-	// 	return this.homeService.deleteHomeById(id);
-	// }
+		if (realtor.id !== user.id) {
+			throw new UnauthorizedException();
+		}
+		return this.homeService.deleteHomeById(id);
+	}
 
 	// @Roles(UserType.BUYER)
 	// @Post('/:id/inquire')
@@ -103,19 +103,19 @@ export class HomeController {
 	// 	return this.homeService.inquire(user, homeId, message);
 	// }
 
-	// @Roles(UserType.REALTOR)
-	// @Get('/:id/messages')
-	// async getHomeMessages(
-	// 	@Param('id', ParseIntPipe) id: number,
-	// 	@User() user: UserInfo,
-	// ) {
-	// 	const realtor = await this.homeService.getRealtorByHomeId(id);
+	@Roles(UserType.REALTOR)
+	@Get('/:id/messages')
+	async getHomeMessages(
+		@Param('id', ParseIntPipe) id: number,
+		@User() user: UserInfo,
+	) {
+		const realtor = await this.homeService.getRealtorByHomeId(id);
 
-	// 	if (realtor.id !== user.id) {
-	// 		throw new UnauthorizedException();
-	// 	}
+		if (realtor.id !== user.id) {
+			throw new UnauthorizedException();
+		}
 
-	// 	return this.homeService.getMessagesByHome(id);
-	// }
+		return this.homeService.getMessagesByHome(id);
+	}
 }
 

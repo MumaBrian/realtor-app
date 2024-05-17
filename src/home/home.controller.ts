@@ -20,9 +20,7 @@ import {
 } from './dto/home.dto';
 import { HomeService } from './home.service';
 import { User, UserInfo } from 'src/user/decorators/user.decorator';
-import { AuthGuard } from 'src/guards/guard';
 import { Roles } from 'src/decorators/roles.decorator';
-// import { Roles } from 'src/decorators/roles.decorator';
 
 @Controller('home')
 export class HomeController {
@@ -57,7 +55,6 @@ export class HomeController {
 		return this.homeService.getHomeById(id);
 	}
 	@Roles(UserType.REALTOR  )
-	@UseGuards(AuthGuard)
 	@Post()
 	createHome(@Body() body: CreateHomeDto, @User() user: UserInfo) {
 		return this.homeService.createHome(body, user.id);
@@ -93,15 +90,15 @@ export class HomeController {
 		return this.homeService.deleteHomeById(id);
 	}
 
-	// @Roles(UserType.BUYER)
-	// @Post('/:id/inquire')
-	// inquire(
-	// 	@Param('id', ParseIntPipe) homeId: number,
-	// 	@User() user: UserInfo,
-	// 	@Body() { message }: InquireDto,
-	// ) {
-	// 	return this.homeService.inquire(user, homeId, message);
-	// }
+	@Roles(UserType.BUYER)
+	@Post('/:id/inquire')
+	inquire(
+		@Param('id', ParseIntPipe) homeId: number,
+		@User() user: UserInfo,
+		@Body() { message }: InquireDto,
+	) {
+		return this.homeService.inquire(user, homeId, message);
+	}
 
 	@Roles(UserType.REALTOR)
 	@Get('/:id/messages')

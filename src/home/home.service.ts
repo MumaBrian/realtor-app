@@ -1,7 +1,6 @@
 import { PropertyType } from '.prisma/client';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-// import { UserInfo } from 'src/user/decorators/user.decorator';
 import { HomeResponseDto } from './dto/home.dto';
 import { UserInfo } from 'src/user/decorators/user.decorator';
 

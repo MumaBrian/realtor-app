@@ -3,7 +3,6 @@ import { HomeController } from './home.controller';
 import { HomeService } from './home.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PropertyType } from '@prisma/client';
-import exp from 'constants';
 import { UnauthorizedException } from '@nestjs/common';
 
 const mockUser = {

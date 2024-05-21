@@ -34,6 +34,32 @@ const mockGetHomes = [
   },
 ];
 
+const mockGetHomeById = {
+  "id": 1,
+  "address": "Cameroon",
+  "city": "molyko",
+  "price": 250000,
+  "propertyType": "RESIDENTIAL",
+  "images": [
+      {
+          "url": "https://example.com/image1.jpg"
+      },
+      {
+          "url": "https://example.com/image2.jpg"
+      },
+      {
+          "url": "https://example.com/image3.jpg"
+      }
+  ],
+  "realtor": {
+      "name": "brian",
+      "email": "muma@gmail.com",
+      "phone": "4641653"
+  },
+  "numberOfBedrooms": 3,
+  "numberOfBathrooms": 2
+}
+
 const mockImages = [
   {
     id: 1,
@@ -58,7 +84,8 @@ describe('HomeService', () => {
           useValue: {
             home: {
               findMany: jest.fn().mockReturnValue(mockGetHomes),
-              create: jest.fn().mockReturnValue(mockHome)
+              create: jest.fn().mockReturnValue(mockHome),
+              findUnique: jest.fn().mockReturnValue(mockGetHomeById)
             },
             image: {
               createMany: jest.fn().mockReturnValue(mockImages)
@@ -178,4 +205,38 @@ describe('HomeService', () => {
       });
     });
   });
+
+  describe('getHomeById', () => {
+
+    it('should get home by id', async () => {
+      const mockGetHomeByID = jest.fn().mockReturnValue(mockGetHomeById);
+
+      jest
+        .spyOn(prismaService.home, 'findUnique')
+        .mockImplementation(mockGetHomeByID);
+
+      await service.getHomeById(1);
+
+      expect(mockGetHomeByID).toHaveBeenCalledWith({
+        where: {
+          id: 1,
+        },
+        select: {
+          ...homeSelect,
+          images: {
+            select: {
+              url: true,
+            },
+          },
+          realtor: {
+            select: {
+              name: true,
+              email: true,
+              phone: true,
+            },
+          },
+        },
+		})
+      });
+    });
 });

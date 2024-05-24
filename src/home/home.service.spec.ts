@@ -236,7 +236,17 @@ describe('HomeService', () => {
             },
           },
         },
-		})
-      });
+		  })
     });
+
+    it('should throw not found exception if no homes are found', async () => {
+      const mockPrismaFindHomesById = jest.fn().mockReturnValue(null);
+
+      jest
+        .spyOn(prismaService.home, 'findUnique')
+        .mockImplementation(mockPrismaFindHomesById);
+
+      await expect(service.getHomeById(1)).rejects.toThrowError(NotFoundException);
+    });
+  });
 });

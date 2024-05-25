@@ -71,6 +71,16 @@ const mockImages = [
   }
 ];
 
+const mockUpdate = {
+  "id": 1,
+  "address": "123 Main St",
+  "city": "buea",
+  "price": 250000,
+  "propertyType": "RESIDENTIAL",
+  "numberOfBedrooms": 3,
+  "numberOfBathrooms": 2
+}
+
 describe('HomeService', () => {
   let service: HomeService;
   let prismaService: PrismaService;
@@ -85,7 +95,8 @@ describe('HomeService', () => {
             home: {
               findMany: jest.fn().mockReturnValue(mockGetHomes),
               create: jest.fn().mockReturnValue(mockHome),
-              findUnique: jest.fn().mockReturnValue(mockGetHomeById)
+              findUnique: jest.fn().mockReturnValue(mockGetHomeById),
+              update: jest.fn().mockReturnValue(mockUpdate)
             },
             image: {
               createMany: jest.fn().mockReturnValue(mockImages)
@@ -248,5 +259,76 @@ describe('HomeService', () => {
 
       await expect(service.getHomeById(1)).rejects.toThrowError(NotFoundException);
     });
+  });
+
+  describe('updateHomeById', () => {
+    const mockUpdateHomeParams = {
+      "address": "123 Main St",
+      "city": "buea",
+      "propertyType": PropertyType.RESIDENTIAL,
+      "images": [
+        {
+            "url":"https://example.com/image1.jpg"
+        },
+        {
+          "url": "https://example.com/image2.jpg"
+        }
+      ]
+    }
+
+    it('should update home by id', async () => {
+      const mockUpdateHomeByID = jest.fn().mockReturnValue(mockUpdate);
+
+      jest
+        .spyOn(prismaService.home, 'findUnique')
+        .mockImplementation(mockUpdateHomeByID);
+
+      await service.updateHomeById(1,mockUpdateHomeParams);
+
+      expect(mockUpdateHomeByID).toHaveBeenCalledWith({
+        where: {
+          id: 1,
+        }
+		  })
+    });
+
+    it('should throw not found exception if no homes are found', async () => {
+      const mockPrismaFindHomesById = jest.fn().mockReturnValue(null);
+
+      jest
+        .spyOn(prismaService.home, 'findUnique')
+        .mockImplementation(mockPrismaFindHomesById);
+
+      await expect(service.getHomeById(1)).rejects.toThrowError(NotFoundException);
+    });
+
+    it('should update home after home id is found', async () => {
+      const mockUpdateHomeByID = jest.fn().mockReturnValue(mockUpdate);
+
+      jest
+        .spyOn(prismaService.home, 'update')
+        .mockImplementation(mockUpdateHomeByID);
+
+      await service.updateHomeById(1,mockUpdateHomeParams);
+
+      expect(mockUpdateHomeByID).toHaveBeenCalledWith({
+        where: {
+          id: 1,
+        },
+        data: {
+          address: "123 Main St",
+          city: "buea",
+          propertyType: PropertyType.RESIDENTIAL,
+          images: [
+            {
+              url: "https://example.com/image1.jpg"
+            },
+            {
+              url: "https://example.com/image2.jpg"
+            }
+          ]
+        }
+      })
+    })
   });
 });
